@@ -119,18 +119,26 @@ Chatbot chỉ nhận tối đa 50 công việc mới nhất mà người hỏi �
 
 ```text
 app/
-  main.py          # FastAPI routes, dependency và phân quyền
+  main.py          # Khởi tạo app, database, middleware và gắn router
+  routers/
+    auth.py        # Đăng ký, đăng nhập, đăng xuất
+    tasks.py       # Nhân viên và CRUD công việc
+    chat.py        # Chatbot và lịch sử chat
+    system.py      # Trang chủ và health check
   schemas.py       # Request/response Pydantic
   models.py        # Bảng SQLAlchemy
   database.py      # Engine và session database
   dependencies.py  # DB session và xác thực người dùng
+  security.py      # Hash mật khẩu và quản lý phiên đăng nhập
+  task_service.py  # Truy vấn công việc theo quyền
+  middleware.py    # Kiểm tra nguồn yêu cầu
   ai_service.py    # Lời gọi OpenAI, prompt, chế độ demo
   config.py        # Đọc cấu hình môi trường
   static/           # Giao diện để thử API
 tests/test_app.py  # Test luồng đăng nhập, phân quyền, chatbot
 ```
 
-Sơ đồ một yêu cầu: **trình duyệt → FastAPI route → Pydantic validation → dependency xác thực → SQLAlchemy/database → response**. Riêng `/api/chat` gọi thêm `ai_service.py` sau khi backend đã lọc công việc theo quyền.
+Sơ đồ một yêu cầu: **trình duyệt → router → Pydantic validation → dependency xác thực → service/database → response**. `main.py` chỉ lắp các phần của ứng dụng; khi server khởi động, lifespan tạo những bảng còn thiếu. Riêng `/api/chat` gọi thêm `ai_service.py` sau khi backend đã lọc công việc theo quyền.
 
 ## Phạm vi triển khai
 

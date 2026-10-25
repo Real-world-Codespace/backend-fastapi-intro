@@ -3,14 +3,16 @@ from fastapi.testclient import TestClient
 
 from app import ai_service
 from app.config import Settings
-from app.database import make_session_factory
+from app.database import Base, make_session_factory
 from app.main import create_app
 
 
 @pytest.fixture
 def app(tmp_path):
     settings = Settings(database_url=f"sqlite:///{tmp_path / 'test.db'}", ai_mode="demo", ai_max_requests_per_hour=2)
-    return create_app(settings)
+    app = create_app(settings)
+    Base.metadata.create_all(app.state.engine)
+    return app
 
 
 def account(app, name: str, email: str) -> TestClient:
@@ -74,6 +76,7 @@ def test_chat_only_receives_visible_tasks_and_has_limit(app):
 
 def test_chat_needs_key_in_openai_mode(tmp_path):
     app = create_app(Settings(database_url=f"sqlite:///{tmp_path / 'no-key.db'}", ai_mode="openai"))
+    Base.metadata.create_all(app.state.engine)
     user = account(app, "Lan", "lan@example.com")
     response = user.post("/api/chat", json={"message": "Xin chào"})
     assert response.status_code == 503
@@ -122,3 +125,13 @@ def test_supabase_url_uses_psycopg_driver_without_connecting():
         assert engine.url.query["sslmode"] == "require"
     finally:
         engine.dispose()
+
+
+def test_startup_creates_tables(tmp_path):
+    app = create_app(Settings(database_url=f"sqlite:///{tmp_path / 'startup.db'}", ai_mode="demo"))
+    with TestClient(app) as client:
+        response = client.post(
+            "/api/auth/register",
+            json={"name": "Lan", "email": "lan@example.com", "password": "password1234"},
+        )
+        assert response.status_code == 201
