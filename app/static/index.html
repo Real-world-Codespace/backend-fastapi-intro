@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TaskFlow AI · Quản lý công việc</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <a class="brand" href="/"> <span class="brand-mark">✓</span> TaskFlow <span class="brand-ai">AI</span></a>
+      <div class="top-actions"><span id="whoami"></span><button id="logout" class="link-button hidden">Đăng xuất</button></div>
+    </header>
+
+    <main id="auth-view" class="auth-wrap">
+      <div class="intro">
+        <div class="eyebrow">FASTAPI LEARNING PROJECT</div>
+        <h1>Công việc rõ ràng.<br><em>Trợ lý luôn sẵn sàng.</em></h1>
+        <p>Một nơi để giao việc, theo dõi tiến độ và hỏi trợ lý AI về những công việc bạn được phép xem.</p>
+        <div class="feature-row"><span>01 · Đăng nhập</span><span>02 · Quản lý việc</span><span>03 · Hỏi AI</span></div>
+      </div>
+      <section class="auth-card">
+        <div class="tab-row"><button id="login-tab" class="tab active">Đăng nhập</button><button id="register-tab" class="tab">Đăng ký</button></div>
+        <form id="auth-form">
+          <label id="name-field" class="hidden">Họ và tên<input id="name" autocomplete="name" minlength="2" maxlength="100"></label>
+          <label>Email công ty<input id="email" type="email" autocomplete="email" required></label>
+          <label>Mật khẩu<input id="password" type="password" autocomplete="current-password" required></label>
+          <button id="auth-submit" class="primary" type="submit">Đăng nhập <span>↗</span></button>
+        </form>
+        <p id="auth-error" class="error" role="alert"></p>
+        <p class="auth-hint">Dự án học tập: đăng ký mở để các học viên tạo tài khoản thử nghiệm.</p>
+      </section>
+    </main>
+
+    <main id="app-view" class="workspace hidden">
+      <section class="heading"><div><div class="eyebrow">KHÔNG GIAN LÀM VIỆC</div><h1>Việc của đội ngũ</h1><p>Những công việc bạn tạo hoặc được giao sẽ xuất hiện ở đây.</p></div><div id="stats" class="stats"></div></section>
+      <div class="grid">
+        <section class="panel tasks-panel">
+          <div class="panel-heading"><div><h2>Danh sách công việc</h2><p>Ưu tiên những việc cần hành động tiếp theo.</p></div><button id="refresh-tasks" class="secondary">Làm mới</button></div>
+          <form id="task-form" class="task-form">
+            <label class="full">Tên công việc<input id="task-title" placeholder="Ví dụ: Chuẩn bị báo cáo tuần" maxlength="160" required></label>
+            <label class="full">Mô tả<textarea id="task-description" rows="2" maxlength="5000" placeholder="Kết quả cần đạt, thông tin liên quan..."></textarea></label>
+            <label>Người thực hiện<select id="task-assignee"></select></label>
+            <label>Ưu tiên<select id="task-priority"><option value="medium">Trung bình</option><option value="high">Cao</option><option value="low">Thấp</option></select></label>
+            <label>Hạn hoàn thành<input id="task-due" type="date"></label>
+            <button class="primary add-button" type="submit">+ Tạo công việc</button>
+          </form>
+          <p id="task-error" class="error" role="alert"></p>
+          <div class="filter-row"><button class="filter active" data-filter="all">Tất cả</button><button class="filter" data-filter="todo">Cần làm</button><button class="filter" data-filter="doing">Đang làm</button><button class="filter" data-filter="done">Hoàn thành</button></div>
+          <div id="task-list" class="task-list"></div>
+        </section>
+        <section class="panel chat-panel">
+          <div class="panel-heading"><div><div class="ai-icon">✦</div><h2>Trợ lý công việc</h2><p>Hỏi về công việc của bạn, ưu tiên và tiến độ.</p></div></div>
+          <div id="ai-banner" class="ai-banner"></div>
+          <div id="chat-messages" class="chat-messages"></div>
+          <form id="chat-form" class="chat-form"><textarea id="chat-input" rows="2" maxlength="2000" placeholder="Hôm nay tôi nên ưu tiên việc gì?" required></textarea><button class="primary" type="submit">Gửi ↗</button></form>
+          <p id="chat-error" class="error" role="alert"></p>
+        </section>
+      </div>
+    </main>
+    <dialog id="edit-dialog" class="edit-dialog">
+      <form id="edit-form">
+        <div class="dialog-title"><h2>Sửa công việc</h2><button id="close-edit" type="button" aria-label="Đóng">×</button></div>
+        <label>Tên công việc<input id="edit-title" maxlength="160" required></label>
+        <label>Mô tả<textarea id="edit-description" rows="3" maxlength="5000"></textarea></label>
+        <div class="dialog-grid"><label>Người thực hiện<select id="edit-assignee"></select></label><label>Ưu tiên<select id="edit-priority"><option value="low">Thấp</option><option value="medium">Trung bình</option><option value="high">Cao</option></select></label></div>
+        <label>Hạn hoàn thành<input id="edit-due" type="date"></label>
+        <p id="edit-error" class="error" role="alert"></p>
+        <button class="primary" type="submit">Lưu thay đổi</button>
+      </form>
+    </dialog>
+    <footer>Dự án thực hành FastAPI · <a href="/docs" target="_blank" rel="noopener">Xem API docs ↗</a></footer>
+  </div>
+  <script src="/static/app.js" defer></script>
+</body>
+</html>
